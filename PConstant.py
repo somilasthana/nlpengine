@@ -7,3 +7,6 @@ class PConstant(Enum) :
     CONSTANT_ARTICLEID = "articleid"
 
     CORENLP_CONFIG = "com.corenlp.path"
+
+    ENTITY = "entityname"
+    TAGS = "tags"

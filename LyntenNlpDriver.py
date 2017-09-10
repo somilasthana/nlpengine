@@ -9,9 +9,6 @@ import requests
 from PConfig import PConfig
 from PConstant import PConstant
 import logging
-// Most of this code is taken from Lynten/stanford-corenlp 
-// But needed a fine control
-
 
 class LyntenNlpDriver(object):
 
@@ -22,8 +19,8 @@ class LyntenNlpDriver(object):
         self.port = port
         self.lang = lang
         self._flogger()
+        self.cmd = self.cmdnativeserver(memory, port, lang)
         if kstart:
-            self.cmd = self.cmdnativeserver(memory, port, lang)
             self.pid = self.runnativeserver(self.cmd)
 
         
@@ -36,6 +33,7 @@ class LyntenNlpDriver(object):
         path = '"{}*"'.format(self.corenlp_path)
         args = [cmd, java_args, '-cp', path, java_class, '-port', str(port)]
         args = ' '.join(args)
+        self.url = 'http://localhost:' + str(self.port)
         return args
 
     def runnativeserver(self,args):
@@ -45,7 +43,6 @@ class LyntenNlpDriver(object):
             out_file = null_file
             p = subprocess.Popen(args, shell=True, stdout=out_file, stderr=subprocess.STDOUT)
 
-        self.url = 'http://localhost:' + str(self.port)
         self._logger.info("initiating corenlp server '%s'", self.url)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         host_name = urlparse(self.url).hostname
@@ -78,6 +75,12 @@ class LyntenNlpDriver(object):
         
         r_dict = self._request('ssplit,tokenize', sentence)
         return [token['word'] for s in r_dict['sentences'] for token in s['tokens']]
+
+    def sentence_tokenize(self, sentence):
+
+        r_dict = self._request('ssplit', sentence)
+        return [token['word'] for s in r_dict['sentences'] for token in s['tokens']]
+
 
     def pos_tag(self, sentence):
 
