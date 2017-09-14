@@ -36,7 +36,7 @@ class LyntenNlpEngine(object):
                 posmap.setdefault(pv[1], [])
                 posmap[pv[1]].append(pv[0])
 
-        ninterest = posmap['NN']
+        ninterest = list(set(posmap['NN']))
         
         summarylist = self._posanalysis(pos)
         summarymap = { 'len' : len(summarylist) }
